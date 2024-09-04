@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Teacher's Day</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to top right, #e67e22, #e74c3c);
+            transition: background 1s ease;
+            overflow: hidden; /* Prevent scrollbars on mobile */
+        }
+
+        #letter {
+            width: 80vw; /* Responsive width */
+            height: 50vw; /* Responsive height */
+            max-width: 400px; /* Max width for large screens */
+            max-height: 250px; /* Max height for large screens */
+            background: linear-gradient(to bottom, #e0e0e0 0%, #f9f9f9 100%);
+            border: 1px solid #d0d0d0;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            perspective: 1000px;
+        }
+
+        #letter.opened {
+            width: 80vw; /* Keep responsive width */
+            height: 50vw; /* Keep responsive height */
+            max-width: 600px; /* Max width for large screens */
+            max-height: 400px; /* Max height for large screens */
+            transition: all 1s ease;
+        }
+
+        #letter::before, #letter::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background-color: #d35400;
+            transition: all 0.5s ease;
+        }
+
+        #letter::before {
+            top: 0;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: bottom;
+            transform: rotateX(0deg);
+        }
+
+        #letter::after {
+            bottom: 0;
+            clip-path: polygon(50% 0, 100% 100%, 0 100%);
+            transform-origin: top;
+            transform: rotateX(0deg);
+        }
+
+        #letter.opened::before {
+            transform: rotateX(-180deg);
+            transform-origin: top;
+            top: -100%;
+        }
+
+        #letter.opened::after {
+            transform: rotateX(180deg);
+            transform-origin: bottom;
+            bottom: -100%;
+        }
+
+        #message {
+            display: none;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #ffffff;
+            transform: rotateX(180deg);
+            backface-visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #letter.opened #message {
+            display: flex;
+            transform: rotateX(0deg);
+            opacity: 1;
+            transition: opacity 1s ease 0.5s;
+        }
+
+        #message h1 {
+            font-size: 4vw; /* Responsive font size */
+            margin: 0;
+            color: #34495e;
+        }
+
+        #message h2 {
+            font-size: 6vw; /* Responsive font size */
+            margin: 20px 0;
+            color: #e74c3c;
+        }
+
+        #credit {
+            font-size: 2vw; /* Responsive font size */
+            color: #000;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .label {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 3vw; /* Responsive font size */
+        }
+
+        .next-label {
+            top: 10px;
+        }
+
+        .previous-label {
+            bottom: 10px;
+        }
+
+        #popup {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 4vw;
+            display: none;
+        }
+
+        #popup.show {
+            display: block;
+            animation: fadeInOut 6s ease forwards;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            10%, 90% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="letter">
+    <div id="message">
+        <h1 id="main-text">Happy Teacher's Day</h1>
+        <h2 id="sub-text">Vandana Ma'am</h2>
+    </div>
+    <div id="credit">by Tanish Verma</div>
+    <div class="label next-label">Next</div>
+    <div class="label previous-label">Previous</div>
+</div>
+
+<div id="popup" class="show">Click on the letter to open it. Tap on the upper triangle for the next page.</div>
+
+<script>
+    let currentStep = 0;
+    const messages = [
+        { main: "Happy Teacher's Day", sub: "Vandana Ma'am" },
+        { main: "Thank you for everything", sub: "•/•" },
+        { main: "I am learning web development,", sub: "so this is a small thing I made for you, Ma'am." },
+        { main: "But you did a lot for me,", sub: "so at last, I want to wish you Happy Teacher's Day and thank you so much." }
+    ];
+
+    const letter = document.getElementById('letter');
+    let isOpened = false;
+
+    function showMessage(step) {
+        document.getElementById('main-text').textContent = messages[step].main;
+        document.getElementById('sub-text').textContent = messages[step].sub;
+    }
+
+    function nextMessage() {
+        if (currentStep < messages.length - 1) {
+            currentStep++;
+            showMessage(currentStep);
+        } else {
+            // Return to the original position and text
+            letter.classList.remove('opened');
+            document.body.style.background = 'linear-gradient(to top right, #e67e22, #e74c3c)';
+            document.getElementById('main-text').textContent = "Happy Teacher's Day";
+            document.getElementById('sub-text').textContent = "Vandana Ma'am";
+            currentStep = 0;
+            isOpened = false;
+        }
+    }
+
+    function previousMessage() {
+        if (currentStep > 0) {
+            currentStep--;
+            showMessage(currentStep);
+        }
+    }
+
+    function autoChangeMessage() {
+        setTimeout(function() {
+            if (isOpened) {
+                nextMessage();
+                if (currentStep < messages.length - 1) {
+                    autoChangeMessage();  // Recursively call to change all pages
+                }
+            }
+        }, 4000); // 4-second delay
+    }
+
+    letter.addEventListener('touchstart', function(event) {
+        const rect = letter.getBoundingClientRect();
+        const touchY = event.touches[0].clientY - rect.top;
+
+        if (!isOpened) {
+            // Open the envelope
+            letter.classList.add('opened');
+            document.body.style.background = 'linear-gradient(to top right, #f39c12, #e74c3c)';
+            isOpened = true;
+
+            // Automatically flip and change the text every 4 seconds
+            autoChangeMessage();
+        } else {
+            if (touchY < rect.height / 2) {
+                nextMessage();
+            } else {
+                previousMessage();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
